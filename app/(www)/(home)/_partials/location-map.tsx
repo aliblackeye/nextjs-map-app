@@ -3,8 +3,10 @@ import { MapProvider } from "@/lib/providers/map-provider";
 
 export const LocationMap = () => {
   return (
-    <MapProvider>
-      <Map />
-    </MapProvider>
+    <div data-testid="location-map">
+      <MapProvider>
+        <Map />
+      </MapProvider>
+    </div>
   );
 };

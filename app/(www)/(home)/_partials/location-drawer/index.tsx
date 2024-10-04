@@ -57,7 +57,7 @@ export function LocationDrawer() {
   }, [selectedLocation]);
 
   return (
-    <Box>
+    <Box data-testid="location-drawer">
       <DrawerComponent
         isOpen={open}
         placement="right"

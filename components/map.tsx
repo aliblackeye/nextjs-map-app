@@ -75,6 +75,7 @@ export const Map = () => {
 
   return (
     <GoogleMap
+      data-testid="map-component"
       onClick={(e) => onMapClick(e?.latLng!.lat(), e?.latLng!.lng())}
       mapContainerStyle={defaultMapContainerStyle}
       center={defaultMapCenter}
