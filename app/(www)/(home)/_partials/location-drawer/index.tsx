@@ -9,7 +9,7 @@ import {
   Box,
   IconButton,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Location } from "@/lib/types";
 import { useLocationStore } from "@/lib/store/use-location-store";
 import { LOCATION_ICONS } from "@/lib/constants/location";
@@ -40,6 +40,12 @@ export function LocationDrawer() {
 
   // States
   const [locationData, setLocationData] = useState<Location>(emptyLocation);
+
+  const handleClickEdit = useCallback(() => {
+    setOpen(true);
+    setSelectedLocation(null);
+    setMode("list");
+  }, []);
 
   // Effects
   useEffect(() => {
@@ -112,11 +118,7 @@ export function LocationDrawer() {
           right="64px"
           zIndex={1000}
           colorScheme="blue"
-          onClick={() => {
-            setOpen(true);
-            setSelectedLocation(null);
-            setMode("list");
-          }}
+          onClick={handleClickEdit}
         />
       )}
     </Box>

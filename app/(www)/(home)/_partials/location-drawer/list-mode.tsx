@@ -2,6 +2,7 @@ import { useLocationStore } from "@/lib/store/use-location-store";
 import { Location } from "@/lib/types";
 import { EditIcon } from "@chakra-ui/icons";
 import { Box, IconButton, List, ListItem, Text } from "@chakra-ui/react";
+import { useCallback } from "react";
 
 interface ListModeProps {
   setLocationData: (location: Location) => void;
@@ -9,6 +10,12 @@ interface ListModeProps {
 export const ListMode = ({ setLocationData }: ListModeProps) => {
   // Stores
   const { setMode, locations } = useLocationStore();
+
+  const handleClickEdit = useCallback((location: Location) => {
+    setLocationData(location);
+    setMode("edit");
+  }, []);
+
   return (
     <Box>
       {locations.length === 0 ? (
@@ -35,10 +42,7 @@ export const ListMode = ({ setLocationData }: ListModeProps) => {
               <IconButton
                 aria-label="Düzenle"
                 icon={<EditIcon />}
-                onClick={() => {
-                  setLocationData(location);
-                  setMode("edit");
-                }}
+                onClick={() => handleClickEdit(location)}
               />
             </ListItem>
           ))}

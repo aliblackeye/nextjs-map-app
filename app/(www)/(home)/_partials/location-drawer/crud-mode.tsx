@@ -13,7 +13,7 @@ import {
   ListItem,
   Select,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { Field, Form, Formik } from "formik";
 
 interface CrudModeProps {
@@ -41,16 +41,19 @@ export const CrudMode = ({ locationData }: CrudModeProps) => {
     return error;
   };
 
-  const handleSave = (values: Location) => {
-    if (mode === "add") {
-      addLocation(values);
-    } else if (mode === "edit") {
-      updateLocation(values);
-    }
-    setOpen(false);
-  };
+  const handleSave = useCallback(
+    (values: Location) => {
+      if (mode === "add") {
+        addLocation(values);
+      } else if (mode === "edit") {
+        updateLocation(values);
+      }
+      setOpen(false);
+    },
+    [mode]
+  );
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (locationData && locationData.id) {
       if (
         route.from?.id === locationData.id ||
@@ -61,9 +64,9 @@ export const CrudMode = ({ locationData }: CrudModeProps) => {
       deleteLocation(locationData.id);
       setOpen(false); // Silmeden sonra drawer kapanmalı
     }
-  };
+  }, [locationData, route]);
 
-  const handleShowRoute = () => {
+  const handleShowRoute = useCallback(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       const fromLocation = {
         id: 0,
@@ -75,7 +78,7 @@ export const CrudMode = ({ locationData }: CrudModeProps) => {
       };
       setRoute({ from: fromLocation, to: locationData });
     });
-  };
+  }, [locationData]);
 
   return (
     <Formik
