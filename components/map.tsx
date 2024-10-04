@@ -1,3 +1,5 @@
+"use client";
+
 import { useLocationStore } from "@/lib/store/use-location-store";
 import { Location } from "@/lib/types";
 import { GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
@@ -21,21 +23,35 @@ const convertIconToBase64 = (
   return `data:image/svg+xml;charset=UTF-8,${svgString}`;
 };
 
-interface MapProps {
-  onMapClick: (
-    latitude: Location["latitude"],
-    longitude: Location["longitude"]
-  ) => void;
-  onLocationClick: (location: Location) => void;
-  route: { from: Location | null; to: Location | null }; // Rota bilgisi
-  onRouteClose: () => void; // Rotayı kapatma işlevi
-}
-
-export const Map = (props: MapProps) => {
-  const { onMapClick, onLocationClick, route, onRouteClose } = props;
-  const { locations } = useLocationStore();
+export const Map = () => {
+  const { locations, setMode, setSelectedLocation, setOpen, route, setRoute } =
+    useLocationStore();
   const [directions, setDirections] =
     useState<google.maps.DirectionsResult | null>(null);
+
+  // Konuma tıklayınca düzenleme moduna geç
+  const onLocationClick = (location: Location) => {
+    setMode("edit");
+    setSelectedLocation(location);
+    setOpen(true);
+  };
+
+  // Haritaya tıklanınca konum ekleme moduna geç
+  const onMapClick = (
+    latitude: Location["latitude"],
+    longitude: Location["longitude"]
+  ) => {
+    setMode("add");
+    setOpen(true);
+    setSelectedLocation({
+      id: Date.now(),
+      name: "",
+      latitude,
+      longitude,
+      markerColor: "#000000",
+      icon: LOCATION_ICONS[0], // Varsayılan ikon
+    });
+  };
 
   useEffect(() => {
     if (route.from && route.to) {
@@ -111,7 +127,7 @@ export const Map = (props: MapProps) => {
           }}
           onClick={() => {
             setDirections(null); // Rotayı kaldır
-            onRouteClose(); // Rotayı kapat
+            setRoute({ from: null, to: null }); // Rotayı kapat
           }}
         >
           Rotayı Kapat

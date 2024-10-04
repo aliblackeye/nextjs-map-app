@@ -1,15 +1,23 @@
 import { create } from "zustand";
-import { Location } from "@/lib/types";
+import { DrawerMode, Location, Route } from "@/lib/types";
 
 type State = {
   locations: Location[];
+  mode: DrawerMode;
+  open: boolean;
+  selectedLocation: Location | null;
+  route: Route;
 };
 
 type Action = {
+  setMode: (mode: State["mode"]) => void;
   addLocation: (location: Location) => void;
   updateLocation: (location: Location) => void;
-  deleteLocation: (id: number) => void;
+  deleteLocation: (id: number | string) => void;
   loadLocations: () => void; // LocalStorage'dan yükleme fonksiyonu
+  setSelectedLocation: (location: Location | null) => void;
+  setOpen: (open: State["open"]) => void;
+  setRoute: (route: State["route"]) => void;
 };
 
 // Helper function to save to localStorage
@@ -28,12 +36,34 @@ const loadLocationsFromLocalStorage = (): Location[] => {
 
 export const useLocationStore = create<State & Action>((set) => ({
   locations: loadLocationsFromLocalStorage(),
-
+  open: false,
+  mode: "list",
+  route: {
+    from: null,
+    to: null,
+  },
+  selectedLocation: null,
+  setMode: (mode) =>
+    set(() => {
+      return { mode };
+    }),
+  setOpen: (open) =>
+    set(() => {
+      return { open };
+    }),
+  setRoute: (route) =>
+    set(() => {
+      return { route };
+    }),
+  setSelectedLocation: (selectedLocation) =>
+    set(() => {
+      return { selectedLocation };
+    }),
   addLocation: (location) =>
     set((state) => {
       const updatedLocations = [...state.locations, location];
       saveLocationsToLocalStorage(updatedLocations);
-      return { locations: updatedLocations };
+      return { locations: updatedLocations, mode: "list" };
     }),
 
   updateLocation: (updatedLocation) =>
